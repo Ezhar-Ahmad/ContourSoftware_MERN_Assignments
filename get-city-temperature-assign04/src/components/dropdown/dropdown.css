@@ -1,0 +1,14 @@
+.main-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.dropdown {
+  margin-right: 5px;
+}
+
+.select-list {
+  width: 250px;
+  margin-right: 5px;
+}
