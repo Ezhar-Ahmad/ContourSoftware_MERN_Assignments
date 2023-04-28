@@ -10,14 +10,24 @@ import { useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 
 function App() {
+  const getLocalList = () => {
+    let localList = localStorage.getItem("list");
+    if (localList) {
+      return JSON.parse(localList);
+    } else {
+      return [];
+    }
+  };
+
   const [searchData, setSearchData] = useState("");
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
-  const [addedUser, setAddedUser] = useState("");
+  //const [addedUser, setAddedUser] = useState("");
   const [addUpdateBtn, setAddUpdateBtn] = useState("Add");
-  const [allUsers, setAllUsers] = useState([]);
-  const [editUserId, setEditUserId] = useState("");
+  const [editUserIndex, setEditUserIndex] = useState("");
+  const [list, setList] = useState(getLocalList());
+  //const [editUserId, setEditUserId] = useState("");
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -54,50 +64,32 @@ function App() {
   let usersArray = [];
   const handleAddData = () => {
     if (addUpdateBtn == "Update") {
-      let userToEdit = JSON.parse(localStorage.getItem("user" + editUserId));
-      userToEdit.name = name;
-      userToEdit.address = address;
-      userToEdit.city = city;
-      localStorage.setItem("user" + editUserId, JSON.stringify(userToEdit));
-      setAddUpdateBtn("Add");
+      list[editUserIndex][1] = name;
+      list[editUserIndex][2] = address;
+      list[editUserIndex][3] = city;
+
+      setList([...list]);
+
       setName("");
       setAddress("");
       setCity("");
+      setEditUserIndex("");
+      setAddUpdateBtn("Add");
     } else {
       if (name && address && city) {
-        let currentUser = {
-          // id: "",
-          // name: "",
-          // address: "",
-          // city: "",
-        };
+        let currentUser = {};
 
         if (localStorage.clickcount) {
           localStorage.clickcount = Number(localStorage.clickcount) + 1;
         } else {
           localStorage.clickcount = 1;
         }
-        console.log(localStorage.clickcount);
-        currentUser.id = localStorage.clickcount; //countArr[countArr.length - 1];
+        currentUser.id = localStorage.clickcount;
         currentUser.name = name;
         currentUser.address = address;
         currentUser.city = city;
 
-        localStorage.setItem(
-          "user" + localStorage.clickcount,
-          JSON.stringify(currentUser)
-        );
-
-        //let getUser = localStorage.getItem("currentUser");
-        //setAddedUser(JSON.stringify(getUser));
-        setAddedUser(currentUser);
-        usersArray[usersArray.length] = currentUser;
-        setAllUsers(usersArray);
-        console.log("AllUsers: " + usersArray);
-        console.log("addedUsr: " + JSON.stringify(addedUser));
-
-        countArr.push(countArr[countArr.length - 1] + 1);
-        console.log("countArr: " + countArr);
+        setList([...list, [localStorage.clickcount, name, address, city]]);
 
         setName("");
         setAddress("");
@@ -109,25 +101,22 @@ function App() {
     }
   };
 
-  useEffect(() => {}, [allUsers]);
+  useEffect(() => {
+    localStorage.setItem("list", JSON.stringify(list));
+  }, [list]);
 
-  const handleEditData = (event) => {
+  const handleEditData = (index) => {
     setAddUpdateBtn("Update");
-    console.log("user" + event.target.value);
-    let foundUser = localStorage.getItem("user" + event.target.value);
-    let editUser = JSON.parse(foundUser);
-    console.log("foundUser: " + editUser);
-    setName(editUser.name);
-    setAddress(editUser.address);
-    setCity(editUser.city);
-    setEditUserId(editUser.id);
+
+    setName(list[index][1]);
+    setAddress(list[index][2]);
+    setCity(list[index][3]);
+    setEditUserIndex(index);
   };
 
-  useEffect(() => {}, [addUpdateBtn]);
-
-  const handleDeleteData = (event) => {
-    localStorage.removeItem("user" + event.target.value);
-    setAddedUser("");
+  const handleDeleteData = (index) => {
+    list.splice(index, 1);
+    setList([...list]);
   };
 
   const handleSearchChange = (event) => {
@@ -233,19 +222,17 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {/* {allUsers && allUsers.map((item) => <p>{item}</p>)} */}
-            {addedUser && (
+            {list.map((item, ind) => (
               <tr>
-                <td>{addedUser.id}</td>
-                <td>{addedUser.name}</td>
-                <td>{addedUser.address}</td>
-                <td>{addedUser.city}</td>
+                <td>{item[0]}</td>
+                <td>{item[1]}</td>
+                <td>{item[2]}</td>
+                <td>{item[3]}</td>
                 <td>
                   <Button
                     variant="contained"
                     className="edit-btn"
-                    value={addedUser.id}
-                    onClick={handleEditData}
+                    onClick={() => handleEditData(ind)}
                   >
                     Edit
                   </Button>
@@ -255,14 +242,13 @@ function App() {
                     variant="contained"
                     color="error"
                     className="delete-btn"
-                    value={addedUser.id}
-                    onClick={handleDeleteData}
+                    onClick={() => handleDeleteData(ind)}
                   >
                     Delete
                   </Button>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
