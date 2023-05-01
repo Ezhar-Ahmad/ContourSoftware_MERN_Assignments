@@ -93,6 +93,15 @@ table {
   padding: 5px;
 }
 
+.t-head {
+  background-color: #5a6375;
+}
+
+.search-rows {
+  background-color: #eef0f5;
+  /* border-bottom: 1px solid #282c34; */
+}
+
 tr {
   display: flex;
   flex-direction: row;

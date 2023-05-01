@@ -19,15 +19,14 @@ function App() {
     }
   };
 
-  const [searchData, setSearchData] = useState("");
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
-  //const [addedUser, setAddedUser] = useState("");
   const [addUpdateBtn, setAddUpdateBtn] = useState("Add");
   const [editUserIndex, setEditUserIndex] = useState("");
   const [list, setList] = useState(getLocalList());
-  //const [editUserId, setEditUserId] = useState("");
+  const [searchedDetails, setSearchedDetails] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -41,23 +40,21 @@ function App() {
     setCity(event.target.value);
   };
 
-  const handleSearch = () => {
-    if (searchData) {
-      let userData = localStorage.getItem("currentUser");
-      console.log(userData);
-      if (
-        userData.name == searchData ||
-        userData.address == searchData ||
-        userData.city == searchData
-      ) {
-        alert("userData: " + userData);
-      } else {
-        alert("No data found!");
-      }
-    } else {
-      alert("Please enter text to search.");
-    }
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
   };
+
+  const filterData = (item) => {
+    return item[1].toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item[2].toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item[3].toLowerCase().includes(searchTerm.toLowerCase())
+      ? item
+      : "";
+  };
+
+  let filteredData = JSON.parse(localStorage.getItem("list")).filter(
+    filterData
+  );
 
   let countArr = [1];
   let count = 1;
@@ -119,10 +116,6 @@ function App() {
     setList([...list]);
   };
 
-  const handleSearchChange = (event) => {
-    setSearchData(event.target.value);
-  };
-
   const handleClearData = () => {
     localStorage.clear();
   };
@@ -137,15 +130,39 @@ function App() {
         <Stack direction="row" spacing={2}>
           <TextField
             id="filled-search"
-            label="Search field"
+            label="Search Data"
             type="search"
             variant="filled"
-            onChange={handleSearchChange}
+            onChange={handleSearch}
           />
-          <Button variant="contained" onClick={handleSearch}>
+          {/* <Button variant="contained" onClick={handleSearch}>
             Search
-          </Button>
+          </Button> */}
         </Stack>
+      </div>
+      <div className="mt-2">
+        {searchTerm && (
+          <table>
+            <thead className="t-head">
+              <tr>
+                <td>Id</td>
+                <td>Name</td>
+                <td>Address</td>
+                <td>City</td>
+              </tr>
+            </thead>
+            {filteredData.map((item) => (
+              <tbody>
+                <tr className="search-rows">
+                  <td>{item[0]}</td>
+                  <td>{item[1]}</td>
+                  <td>{item[2]}</td>
+                  <td>{item[3]}</td>
+                </tr>
+              </tbody>
+            ))}
+          </table>
+        )}
       </div>
 
       <hr></hr>
