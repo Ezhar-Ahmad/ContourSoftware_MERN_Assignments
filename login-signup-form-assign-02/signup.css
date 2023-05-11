@@ -1,0 +1,41 @@
+.signup-form {
+  margin: auto;
+  width: 20%;
+  padding: 10px;
+  height: 400px;
+  margin-top: 5%;
+}
+
+.user_image {
+  margin: auto;
+  padding: 10px;
+}
+
+.form-heading {
+  text-align: center;
+  background-color: rgb(131, 28, 228);
+  margin-bottom: 20px;
+  margin-top: 5px;
+  border-radius: 3px;
+  font-size: 20px;
+  color: white;
+  height: 35px;
+}
+
+.signup-button,
+.forget-data {
+  margin: auto;
+  text-align: center;
+}
+form {
+  border: 3px solid rgb(104, 77, 77);
+  border-radius: 5px;
+  padding: 5px;
+  padding-bottom: 15px;
+  background-image: url(/pngtree-color-abstract-gradient-blurred-halo-background-picture-image_989445.png);
+}
+
+label,
+p {
+  color: white;
+}
